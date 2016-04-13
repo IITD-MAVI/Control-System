@@ -44,6 +44,7 @@ def signBoardProcess():
 		with lock:	#So that image is not being read/written
 			signBoardProgram = subprocess.Popen(["./demoSignBoard.sh","currentColorFrame.mat"],stdout=subprocess.PIPE, shell = True)
 			(signBoardValue,err) = signBoardProgram.communicate()
+		signBoardValue = signBoardValue.decode("utf-8")
 		if signBoardValue == "True":
 			print ("SignBoard Detected")
 		else:

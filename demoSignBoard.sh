@@ -1,2 +1,2 @@
 #!/bin/sh
-echo "False"
+echo -n "False"
