@@ -18,7 +18,7 @@ serverSocket.send(deviceName.encode('ascii'))
 image = serverSocket.recv(1024)
 print ("Got the image as : ", image.decode('ascii'))
 
-sampleDataString = "FD,2,label1,label2\nLO,1.21,3.44,0.99"
+sampleDataString = "\nFD,2,label1,label2\nLO,1.21,3.44,0.99"
 serverSocket.send(sampleDataString.encode('ascii'))
 
 serverSocket.close()
