@@ -55,10 +55,10 @@ def signBoardProcess():
 			signBoardProgram = subprocess.Popen(["./demoSignBoard.sh","currentColorFrame.jpeg"],stdout=subprocess.PIPE, shell = True)
 			(signBoardValue,err) = signBoardProgram.communicate()
 			signBoardValue = signBoardValue.decode("utf-8")
-		if signBoardValue == "True":
-			print ("SignBoard Detected")
-		else:
-			print ("No SignBoard")
+		#if signBoardValue == "True":
+		#	print ("SignBoard Detected")
+		#else:
+		#	print ("No SignBoard")
 
 ##Function for Capturing Texture output
 #TODO: 	Replace with Actual Texture Detection Program
@@ -76,8 +76,8 @@ def textureDetectProcess():
 					terrainValue[i][j] = textureDetectResult[3*i + j + 1]
 			potHoleVar = textureDetectResult[10]
 		#print ("Texture String : ",textureDetectResult[0])
-		print ("terrainValue : ", terrainValue)
-		print ("potHoleVar : ", potHoleVar)
+		#print ("terrainValue : ", terrainValue)
+		#print ("potHoleVar : ", potHoleVar)
 
 
 ##Function for Capturing the FaceDetection/GPS Data from ZedBoard
@@ -85,6 +85,7 @@ def zedBoardTransaction():
 	global noOfFaces
 	global nameArray,labelArray
 	global pos_x,pos_y,pos_z
+	global zedBoardClientSocket
 	while True:
 		time.sleep(2)
 		dataIdentifier = zedBoardClientSocket.recv(1024)
@@ -111,6 +112,8 @@ def zedBoardTransaction():
 
 			faceDetectionResult = zedBoardClientSocket.recv(1024)
 			faceDetectionResult = faceDetectionResult.decode('ascii')
+			receivedAcknowledge = "Received"
+			zedBoardClientSocket.send(receivedAcknowledge.encode('ascii'))
 			fdResultArray = re.findall("[^,]+",faceDetectionResult)
 			with lock:
 				noOfFaces = fdResultArray[1]
@@ -136,6 +139,8 @@ def zedBoardTransaction():
 
 			localizationResult = zedBoardClientSocket.recv(1024)
 			localizationResult = localizationResult.decode('ascii')
+			receivedAcknowledge = "Received"
+			zedBoardClientSocket.send(receivedAcknowledge.encode('ascii'))
 			loResultArray = re.findall("[^,]+",localizationResult)
 			with lock:
 				(pos_x,pos_y,pos_z) = float(loResultArray[1]),float(loResultArray[2]),float(loResultArray[3])
@@ -167,6 +172,7 @@ def mobilePhoneTransaction():
 		print (myConsolidatedString.__dict__)
 
 def createServerForZedBoard():
+	global zedBoardClientSocket
 	# create a socket object
 	serversocketForZB = socket.socket(
 		        socket.AF_INET, socket.SOCK_STREAM) 
@@ -212,7 +218,7 @@ def createServerForMobileApp():
 LabelToName = {"Label1":"Name1","Label2":"Name2","LabelUnknown":"Unknown"}
 
 ## Main Execution Flow Starts here
-#createServerForZedBoard()
+createServerForZedBoard()
 #createServerForMobileApp()
 
 signBoardProcessThread = threading.Thread(target=signBoardProcess)
@@ -247,6 +253,6 @@ myConsolidatedString = ConsolidatedString("","","","")
 
 signBoardProcessThread.start()
 textureDetectProcessThread.start()
-#zedBoardTransactionThread.start()
+zedBoardTransactionThread.start()
 mobilePhoneTransactionThread.start()
-time.sleep(5)
+time.sleep(5.1)

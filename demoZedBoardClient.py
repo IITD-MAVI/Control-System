@@ -11,14 +11,37 @@ port = 9999
 # connection to hostname on the port.
 serverSocket.connect((host, port))                               
 
-deviceName = "ZEDBOARD"
-serverSocket.send(deviceName.encode('ascii'))
+#requestName = "Localization"
+requestName = "FaceDetectionReceive"
 
-#Receive the Image
-image = serverSocket.recv(1024)
-print ("Got the image as : ", image.decode('ascii'))
-
-sampleDataString = "\nFD,2,label1,label2\nLO,1.21,3.44,0.99"
-serverSocket.send(sampleDataString.encode('ascii'))
-
-serverSocket.close()
+while True:
+	serverSocket.send(requestName.encode('ascii'))
+	if requestName == "FaceDetectionTransmit":
+		##Code to receive Image
+		with open('received_file.jpg', 'wb') as f:
+		    print ('file opened')
+		    while True:
+		        print('receiving data...')
+		        data = s.recv(1024)
+		        #print('DATA BEING RECEIVED:\t', (data))
+		        if not data:
+		            break
+		        # write data to a file
+		        f.write(data)
+	elif requestName == "FaceDetectionReceive":
+		handshake = serverSocket.recv(1024)
+		handshake = handshake.decode('ascii')
+		if handshake == "Send FD Data":
+			fdResult = "FD,2,Label1,Label2"
+			serverSocket.send(fdResult.encode('ascii'))
+			serverSocket.recv(1024)
+	elif requestName == "Localization":
+		handshake = serverSocket.recv(1024)
+		handshake = handshake.decode('ascii')
+		if handshake == "Send LO Data":
+			loResult = "LO,1.2314,2.5426,0.1243"
+			serverSocket.send(loResult.encode('ascii'))
+			serverSocket.recv(1024)
+	else:
+		print ("Please specify request name correctly")
+		serverSocket.close()
