@@ -4,14 +4,15 @@ import time
 import threading
 import subprocess
 import re
+import json
 
 #Class Definitions for different components
 class SignBoardDetect:
-	def __init__(self,value):
-		self.value = value
+	def __init__(self,isSignBoardDetected):
+		self.isSignBoardDetected = isSignBoardDetected
 
 class TextureDetect:
-	def __init__(self,texture,potHole):
+	def __init__(self,texture,pothole):
 		self.texture = texture
 		self.pothole = pothole
 
@@ -26,7 +27,15 @@ class PositionInfo:
 		self.pos_y = pos_y
 		self.pos_z = pos_z
 
+class ConsolidatedString:
+	def __init__(self,signBoardString,textureString,faceDetectionString,positionString):
+		self.signBoardString = signBoardString
+		self.textureString = textureString
+		self.faceDetectionString = faceDetectionString
+		self.positionString = positionString
+
 #lock for printing status of threads
+#lock handles 3 scenarios: 1. Image exclusivity	2. Variable Updation  3. Status Printing
 lock = threading.Lock()
 
 ## Threads to be used for 	1. SignBoard Processing
@@ -39,12 +48,13 @@ lock = threading.Lock()
 ##Function for Capturing SignBoard Processing Output
 #TODO: Replace with Actual SignBoard Program
 def signBoardProcess():
+	global signBoardValue
 	while True:
 		time.sleep(1)	#To be reviewed by Dedeepya
 		with lock:	#So that image is not being read/written
 			signBoardProgram = subprocess.Popen(["./demoSignBoard.sh","currentColorFrame.jpeg"],stdout=subprocess.PIPE, shell = True)
 			(signBoardValue,err) = signBoardProgram.communicate()
-		signBoardValue = signBoardValue.decode("utf-8")
+			signBoardValue = signBoardValue.decode("utf-8")
 		if signBoardValue == "True":
 			print ("SignBoard Detected")
 		else:
@@ -54,17 +64,17 @@ def signBoardProcess():
 #TODO: 	Replace with Actual Texture Detection Program
 #	Create variable for actual terrain name, etc
 def textureDetectProcess():
+	global potHoleVar
 	while True:
 		time.sleep(1)
 		with lock:
 			textureDetectProgram = subprocess.Popen(["./demoTextureDetect.sh","currentColorFrame.jpeg","currentDepthFrame.mat"],stdout=subprocess.PIPE, shell = True)
 			(textureOutput,err) = textureDetectProgram.communicate()
-		textureDetectResult = re.findall("[^,]+",textureOutput.decode("utf-8"))
-		terrainValue = [[0 for x in range(3)] for x in range(3)]
-		for i in range(3):
-			for j in range(3):
-				terrainValue[i][j] = textureDetectResult[3*i + j + 1]
-		potHoleVar = textureDetectResult[10]
+			textureDetectResult = re.findall("[^,]+",textureOutput.decode("utf-8"))
+			for i in range(3):
+				for j in range(3):
+					terrainValue[i][j] = textureDetectResult[3*i + j + 1]
+			potHoleVar = textureDetectResult[10]
 		#print ("Texture String : ",textureDetectResult[0])
 		print ("terrainValue : ", terrainValue)
 		print ("potHoleVar : ", potHoleVar)
@@ -72,6 +82,9 @@ def textureDetectProcess():
 
 ##Function for Capturing the FaceDetection/GPS Data from ZedBoard
 def zedBoardTransaction():
+	global noOfFaces
+	global nameArray,labelArray
+	global pos_x,pos_y,pos_z
 	while True:
 		time.sleep(2)
 		dataIdentifier = zedBoardClientSocket.recv(1024)
@@ -99,12 +112,21 @@ def zedBoardTransaction():
 			faceDetectionResult = zedBoardClientSocket.recv(1024)
 			faceDetectionResult = faceDetectionResult.decode('ascii')
 			fdResultArray = re.findall("[^,]+",faceDetectionResult)
-			noOfFaces = fdResultArray[1]
+			with lock:
+				noOfFaces = fdResultArray[1]
 			if noOfFaces == "0":
 				print ("No Faces in the frame")
+				with lock:
+					labelArray = []
+					nameArray = []
 			else:
 				for iterator in range(int(noOfFaces)):
 					print ("Face",iterator," Label: ",fdResultArray[2+iterator])
+				with lock:
+					labelArray = fdResultArray[2:]
+					nameArray = []
+					for label in labelArray:
+						nameArray.append(LabelToName[label])
 		elif dataIdentifier == "Localization":	#Munib
 			#Code for Handling Localization Data
 			print ("Identified as location data")
@@ -115,11 +137,35 @@ def zedBoardTransaction():
 			localizationResult = zedBoardClientSocket.recv(1024)
 			localizationResult = localizationResult.decode('ascii')
 			loResultArray = re.findall("[^,]+",localizationResult)
-			(pos_x,pos_y,pos_z) = float(loResultArray[1]),float(loResultArray[2]),float(loResultArray[3])
+			with lock:
+				(pos_x,pos_y,pos_z) = float(loResultArray[1]),float(loResultArray[2]),float(loResultArray[3])
 			print ("Localization Data :: X:",pos_x," Y:",pos_y," Z:",pos_z)
 		else:
 			print ("Unidentified Data Identifier: ", dataIdentifier)
 	
+def mobilePhoneTransaction():
+	while True:
+		time.sleep(1)
+		with lock:
+			#Update objects with latest variable values
+			mySignBoardData.isSignBoardDetected = signBoardValue
+			myTextureData.texture = terrainValue
+			myTextureData.pothole = potHoleVar
+			myFaceDetectionData.noOfFaces = noOfFaces
+			myFaceDetectionData.nameArray = nameArray
+			myPositionInfo.pos_x = pos_x
+			myPositionInfo.pos_y = pos_y
+			myPositionInfo.pos_z = pos_z
+		myConsolidatedString.signBoardString = json.dumps(mySignBoardData.__dict__)
+		myConsolidatedString.textureString = json.dumps(myTextureData.__dict__)
+		myConsolidatedString.faceDetectionString = json.dumps(myFaceDetectionData.__dict__)
+		myConsolidatedString.positionString = json.dumps(myPositionInfo.__dict__)
+		#print (mySignBoardData.__dict__)
+		#print (myTextureData.__dict__)
+		#print (myFaceDetectionData.__dict__)
+		#print (myPositionInfo.__dict__)
+		print (myConsolidatedString.__dict__)
+
 def createServerForZedBoard():
 	# create a socket object
 	serversocketForZB = socket.socket(
@@ -162,6 +208,8 @@ def createServerForMobileApp():
 
 	print ("Got a connection from ",mobileClientAddr)
 
+#Dictionary containing Label to Name mapping
+LabelToName = {"Label1":"Name1","Label2":"Name2","LabelUnknown":"Unknown"}
 
 ## Main Execution Flow Starts here
 #createServerForZedBoard()
@@ -170,11 +218,35 @@ def createServerForMobileApp():
 signBoardProcessThread = threading.Thread(target=signBoardProcess)
 textureDetectProcessThread = threading.Thread(target=textureDetectProcess)
 zedBoardTransactionThread = threading.Thread(target=zedBoardTransaction)
+mobilePhoneTransactionThread = threading.Thread(target=mobilePhoneTransaction)
 signBoardProcessThread.daemon = True
 textureDetectProcessThread.daemon = True
 zedBoardTransactionThread.daemon = True
+mobilePhoneTransactionThread.daemon = True
+
+#Initial Values for Shared Variables
+pos_x = ""
+pos_y = ""
+pos_z = ""
+
+noOfFaces = 0
+labelArray = []
+nameArray = []
+
+terrainValue = [[0 for x in range(3)] for x in range(3)]
+potHoleVar = "False"
+
+signBoardValue = "False"
+
+#Initial Object Definitions
+mySignBoardData = SignBoardDetect(signBoardValue)
+myTextureData = TextureDetect(terrainValue,potHoleVar)
+myFaceDetectionData = FaceDetection(noOfFaces,nameArray)
+myPositionInfo = PositionInfo(pos_x,pos_y,pos_z)
+myConsolidatedString = ConsolidatedString("","","","")
 
 signBoardProcessThread.start()
 textureDetectProcessThread.start()
 #zedBoardTransactionThread.start()
+mobilePhoneTransactionThread.start()
 time.sleep(5)

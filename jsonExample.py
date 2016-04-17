@@ -8,3 +8,5 @@ class number:
 a = number(3,"Kuch Bhi")
 print(a.__dict__)
 print(json.dumps(a.__dict__))
+b = json.dumps(a.__dict__)
+print (b.__class__)
