@@ -42,7 +42,7 @@ def signBoardProcess():
 	while True:
 		time.sleep(1)	#To be reviewed by Dedeepya
 		with lock:	#So that image is not being read/written
-			signBoardProgram = subprocess.Popen(["./demoSignBoard.sh","currentColorFrame.mat"],stdout=subprocess.PIPE, shell = True)
+			signBoardProgram = subprocess.Popen(["./demoSignBoard.sh","currentColorFrame.jpeg"],stdout=subprocess.PIPE, shell = True)
 			(signBoardValue,err) = signBoardProgram.communicate()
 		signBoardValue = signBoardValue.decode("utf-8")
 		if signBoardValue == "True":
@@ -57,10 +57,15 @@ def textureDetectProcess():
 	while True:
 		time.sleep(1)
 		with lock:
-			textureDetectProgram = subprocess.Popen(["./demoTextureDetect.sh","currentColorFrame.mat","currentDepthFrame.mat"],stdout=subprocess.PIPE, shell = True)
+			textureDetectProgram = subprocess.Popen(["./demoTextureDetect.sh","currentColorFrame.jpeg","currentDepthFrame.mat"],stdout=subprocess.PIPE, shell = True)
 			(textureOutput,err) = textureDetectProgram.communicate()
-		(textureString, terrainValue, potHoleVar) = re.findall("[^,]+",textureOutput.decode("utf-8"))
-		print ("Texture String : ",textureString)
+		textureDetectResult = re.findall("[^,]+",textureOutput.decode("utf-8"))
+		terrainValue = [[0 for x in range(3)] for x in range(3)]
+		for i in range(3):
+			for j in range(3):
+				terrainValue[i][j] = textureDetectResult[3*i + j + 1]
+		potHoleVar = textureDetectResult[10]
+		#print ("Texture String : ",textureDetectResult[0])
 		print ("terrainValue : ", terrainValue)
 		print ("potHoleVar : ", potHoleVar)
 
@@ -70,10 +75,20 @@ def zedBoardTransaction():
 	while True:
 		time.sleep(2)
 		dataIdentifier = zedBoardClientSocket.recv(1024)
-		if dataIdentifier.decode('ascii') == "FaceDetectionTransmit"	#Munib to have code for receiving jpeg
-			#Code for Sending JPEG -- TODO
+		dataIdentifier = dataIdentifier.decode('ascii')
+		if dataIdentifier == "FaceDetectionTransmit":	#Munib to have code for receiving jpeg
+			#Code for Sending JPEG
 			print ("Identified as FaceDetection Image Request. Sending Image")
-		elif dataIdentifier.decode('ascii') == "FaceDetectionReceive"	#Munib
+			with lock:
+				jpegImage = "currentGrayscaleFrame.jpeg"
+				f = open(jpegImage,'rb')
+				l = f.read(1024)
+				while (l):
+					zedBoardClientSocket.send(l)
+					l = f.read(1024)
+				f.close()
+			print ("Image Sent")
+		elif dataIdentifier == "FaceDetectionReceive":	#Munib
 			##Code for Receiving Face Detection Results
 
 			print ("Identified as FaceDetection Results")
@@ -90,7 +105,7 @@ def zedBoardTransaction():
 			else:
 				for iterator in range(int(noOfFaces)):
 					print ("Face",iterator," Label: ",fdResultArray[2+iterator])
-		elif dataIdentifier.decode('ascii') == "Localization"	#Munib
+		elif dataIdentifier == "Localization":	#Munib
 			#Code for Handling Localization Data
 			print ("Identified as location data")
 			#Handshake for sending Localization Data
@@ -101,6 +116,9 @@ def zedBoardTransaction():
 			localizationResult = localizationResult.decode('ascii')
 			loResultArray = re.findall("[^,]+",localizationResult)
 			(pos_x,pos_y,pos_z) = float(loResultArray[1]),float(loResultArray[2]),float(loResultArray[3])
+			print ("Localization Data :: X:",pos_x," Y:",pos_y," Z:",pos_z)
+		else:
+			print ("Unidentified Data Identifier: ", dataIdentifier)
 	
 def createServerForZedBoard():
 	# create a socket object
@@ -146,7 +164,17 @@ def createServerForMobileApp():
 
 
 ## Main Execution Flow Starts here
-createServerForZedBoard()
+#createServerForZedBoard()
 #createServerForMobileApp()
 
+signBoardProcessThread = threading.Thread(target=signBoardProcess)
+textureDetectProcessThread = threading.Thread(target=textureDetectProcess)
+zedBoardTransactionThread = threading.Thread(target=zedBoardTransaction)
+signBoardProcessThread.daemon = True
+textureDetectProcessThread.daemon = True
+zedBoardTransactionThread.daemon = True
 
+signBoardProcessThread.start()
+textureDetectProcessThread.start()
+#zedBoardTransactionThread.start()
+time.sleep(5)
