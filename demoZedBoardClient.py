@@ -1,4 +1,5 @@
 import socket
+import time
 
 # create a socket object
 serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
@@ -6,28 +7,40 @@ serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # get local machine name
 host = socket.gethostname()                           
 
-port = 9999
+port = 7891
 
 # connection to hostname on the port.
 serverSocket.connect((host, port))                               
 
 #requestName = "Localization"
-requestName = "FaceDetectionReceive"
+requestName = "FaceDetectionTransmit"
 
 while True:
 	serverSocket.send(requestName.encode('ascii'))
+	print ("Sent Data Identifier : ",requestName)
 	if requestName == "FaceDetectionTransmit":
 		##Code to receive Image
 		with open('received_file.jpg', 'wb') as f:
 		    print ('file opened')
 		    while True:
-		        print('receiving data...')
-		        data = s.recv(1024)
+		        #print('receiving data...')
+		        data = serverSocket.recv(1024)
 		        #print('DATA BEING RECEIVED:\t', (data))
 		        if not data:
 		            break
 		        # write data to a file
 		        f.write(data)
+		f.close()
+		print ("File Received")
+		serverSocket.close()
+		time.sleep(0.5)
+		print ("Reconnecting to Host : ",host," Port : ",port)
+		serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+		# get local machine name
+		host = socket.gethostname()                           
+		port = 7891
+		serverSocket.settimeout(3)
+		serverSocket.connect((host, port))
 	elif requestName == "FaceDetectionReceive":
 		handshake = serverSocket.recv(1024)
 		handshake = handshake.decode('ascii')

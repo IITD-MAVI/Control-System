@@ -69,10 +69,11 @@ def textureDetectProcess():
 	while True:
 		time.sleep(1)
 		with lock:
-			textureDetectProgram = subprocess.Popen(["./demoTextureDetect.sh currentColorFrame.jpg"],stdout=subprocess.PIPE, shell = True)
+			#textureDetectProgram = subprocess.Popen(["./demoTextureDetect.sh currentColorFrame.jpg"],stdout=subprocess.PIPE, shell = True)
+			textureDetectProgram = subprocess.Popen(["./textureDetect currentColorFrame.jpg"],stdout=subprocess.PIPE, shell = True)
 			(textureOutput,err) = textureDetectProgram.communicate()
 			textureDetectResult = re.findall("[^,]+",textureOutput.decode("utf-8"))
-			for i in range(3):
+			for i in range(2):
 				for j in range(3):
 					terrainValue[i][j] = textureDetectResult[3*i + j + 1]
 			potHoleVar = textureDetectResult[10]
@@ -105,11 +106,14 @@ def zedBoardTransaction():
 	global nameArray,labelArray
 	global pos_x,pos_y,pos_z
 	global zedBoardClientSocket
+	global serversocketForZB
+	global host
+	global port
 	while True:
+		time.sleep(1)
 		#print ("Waiting to receive Data Identifier")
 		dataIdentifier = zedBoardClientSocket.recv(1024)
 		dataIdentifier = dataIdentifier.decode('ascii')
-		time.sleep(1)
 		#print ("Data Identifier : ",dataIdentifier)
 		if dataIdentifier == "FaceDetectionTransmit":	#Munib to have code for receiving jpeg
 			#Code for Sending JPEG
@@ -122,7 +126,10 @@ def zedBoardTransaction():
 					zedBoardClientSocket.send(l)
 					l = f.read(1024)
 				f.close()
-			print ("Image Sent")
+			print ("Image Sent. Closing Socket.")
+			zedBoardClientSocket.close()
+			print ("Waiting for reconnection ..")
+			zedBoardClientSocket,zedBoardClientAddr = serversocketForZB.accept()
 		elif dataIdentifier == "FaceDetectionReceive":	#Munib
 			##Code for Receiving Face Detection Results
 
@@ -194,6 +201,9 @@ def mobilePhoneTransaction():
 
 def createServerForZedBoard():
 	global zedBoardClientSocket
+	global serversocketForZB
+	global host
+	global port
 	# create a socket object
 	serversocketForZB = socket.socket(
 		        socket.AF_INET, socket.SOCK_STREAM) 
@@ -201,7 +211,7 @@ def createServerForZedBoard():
 	# get local machine name
 	host = socket.gethostname()                           
 	
-	port = 9999                                           
+	port = 7891 
 	
 	# bind to the port
 	serversocketForZB.bind((host, port))                                  
@@ -262,7 +272,7 @@ noOfFaces = 0
 labelArray = []
 nameArray = []
 
-terrainValue = [[0 for x in range(3)] for x in range(3)]
+terrainValue = [[0 for x in range(3)] for x in range(2)]
 potHoleVar = "False"
 
 signBoardValue = "False"
