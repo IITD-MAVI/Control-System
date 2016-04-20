@@ -1,4 +1,4 @@
-#!python3
+#! python3
 import socket
 import time
 import threading
@@ -70,7 +70,7 @@ def textureDetectProcess():
 		time.sleep(1)
 		with lock:
 			#textureDetectProgram = subprocess.Popen(["./demoTextureDetect.sh currentColorFrame.jpg"],stdout=subprocess.PIPE, shell = True)
-			textureDetectProgram = subprocess.Popen(["./textureDetect currentColorFrame.jpg"],stdout=subprocess.PIPE, shell = True)
+			textureDetectProgram = subprocess.Popen(["./textureDetect currentGrayscaleFrame.jpg"],stdout=subprocess.PIPE, shell = True)
 			(textureOutput,err) = textureDetectProgram.communicate()
 			textureDetectResult = re.findall("[^,]+",textureOutput.decode("utf-8").strip())
 			for i in range(2):
