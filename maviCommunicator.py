@@ -71,28 +71,27 @@ def textureDetectProcess():
 			#textureDetectProgram = subprocess.Popen(["./demoTextureDetect.sh currentColorFrame.jpg"],stdout=subprocess.PIPE, shell = True)
 			textureDetectProgram = subprocess.Popen(["./textureDetect currentColorFrame.jpg"],stdout=subprocess.PIPE, shell = True)
 			(textureOutput,err) = textureDetectProgram.communicate()
-			textureDetectResult = re.findall("[^,]+",textureOutput.decode("utf-8"))
+			textureDetectResult = re.findall("[^,]+",textureOutput.decode("utf-8").strip())
 			for i in range(2):
 				for j in range(3):
 					terrainValue[i][j] = textureDetectResult[3*i + j + 1]
-			potHoleVar = textureDetectResult[10]
+			potHoleVar = textureDetectResult[7]
 		#print ("Texture String : ",textureDetectResult[0])
 		#print ("terrainValue : ", terrainValue)
 		#print ("potHoleVar : ", potHoleVar)
 
 
-##Function for Capturing the FaceDetection/GPS Data from ZedBoard
-def zedBoardTransaction():
+##Function for Capturing the FaceDetection Data from ZedBoard
+def faceDetectionTransaction():
 	global noOfFaces
 	global nameArray,labelArray
-	global pos_x,pos_y,pos_z
-	global zedBoardClientSocket
-	global serversocketForZB
+	global faceDetectionClientSocket
+	global serversocketForFD
 	global host
-	global port
+	global portForFaceDetection
 	while True:
 		time.sleep(1)
-		dataIdentifier = zedBoardClientSocket.recv(1024)
+		dataIdentifier = faceDetectionClientSocket.recv(1024)
 		dataIdentifier = dataIdentifier.decode('ascii')
 		if dataIdentifier == "FaceDetectionTransmit":	#Munib to have code for receiving jpeg
 			#Code for Sending JPEG
@@ -102,25 +101,25 @@ def zedBoardTransaction():
 				f = open(jpegImage,'rb')
 				l = f.read(1024)
 				while (l):
-					zedBoardClientSocket.send(l)
+					faceDetectionClientSocket.send(l)
 					l = f.read(1024)
 				f.close()
 			print ("Image Sent. Closing Socket.")
-			zedBoardClientSocket.close()
+			faceDetectionClientSocket.close()
 			print ("Waiting for reconnection ..")
-			zedBoardClientSocket,zedBoardClientAddr = serversocketForZB.accept()
+			faceDetectionClientSocket,faceDetectionClientAddr = serversocketForFD.accept()
 		elif dataIdentifier == "FaceDetectionReceive":	#Munib
 			##Code for Receiving Face Detection Results
 
 			print ("Identified as FaceDetection Results")
 			#Handshake for sending FD Data
 			stringForFDDataRequest = "Send FD Data"
-			zedBoardClientSocket.send(stringForFDDataRequest.encode('ascii'))
+			faceDetectionClientSocket.send(stringForFDDataRequest.encode('ascii'))
 
-			faceDetectionResult = zedBoardClientSocket.recv(1024)
+			faceDetectionResult = faceDetectionClientSocket.recv(1024)
 			faceDetectionResult = faceDetectionResult.decode('ascii')
 			receivedAcknowledge = "Received"
-			zedBoardClientSocket.send(receivedAcknowledge.encode('ascii'))
+			faceDetectionClientSocket.send(receivedAcknowledge.encode('ascii'))
 			fdResultArray = re.findall("[^,]+",faceDetectionResult)
 			with lock:
 				noOfFaces = fdResultArray[1]
@@ -137,24 +136,38 @@ def zedBoardTransaction():
 					nameArray = []
 					for label in labelArray:
 						nameArray.append(LabelToName[label])
-		elif dataIdentifier == "Localization":	#Munib
+		else:
+			print ("Unidentified Data Identifier: ", dataIdentifier)
+	
+def localizationTransaction():
+	global pos_x,pos_y,pos_z
+	global localizationClientSocket
+	global serversocketForLO
+	global host
+	global portForLocalization
+	while True:
+		time.sleep(1)
+		dataIdentifierForLO = localizationClientSocket.recv(1024)
+		dataIdentifierForLO = dataIdentifierForLO.decode('ascii')
+		if dataIdentifierForLO == "Localization":	#Munib
 			#Code for Handling Localization Data
 			print ("Identified as location data")
 			#Handshake for sending Localization Data
 			stringForLODataRequest = "Send LO Data"
-			zedBoardClientSocket.send(stringForLODataRequest.encode('ascii'))
+			localizationClientSocket.send(stringForLODataRequest.encode('ascii'))
 
-			localizationResult = zedBoardClientSocket.recv(1024)
+			localizationResult = localizationClientSocket.recv(1024)
 			localizationResult = localizationResult.decode('ascii')
 			receivedAcknowledge = "Received"
-			zedBoardClientSocket.send(receivedAcknowledge.encode('ascii'))
+			localizationClientSocket.send(receivedAcknowledge.encode('ascii'))
 			loResultArray = re.findall("[^,]+",localizationResult)
 			with lock:
 				(pos_x,pos_y,pos_z) = float(loResultArray[1]),float(loResultArray[2]),float(loResultArray[3])
 			print ("Localization Data :: X:",pos_x," Y:",pos_y," Z:",pos_z)
 		else:
-			print ("Unidentified Data Identifier: ", dataIdentifier)
-	
+			print ("Unidentified Data Identifier: ", dataIdentifierForLO)
+
+
 def mobilePhoneTransaction():
 	while True:
 		time.sleep(1)
@@ -178,48 +191,65 @@ def mobilePhoneTransaction():
 		#print (myPositionInfo.__dict__)
 		print (myConsolidatedString.__dict__)
 
-def createServerForZedBoard():
-	global zedBoardClientSocket
-	global serversocketForZB
+def createServerForFaceDetection():
+	global faceDetectionClientSocket
+	global serversocketForFD
 	global host
-	global port
+	global portForFaceDetection
 	# create a socket object
-	serversocketForZB = socket.socket(
+	serversocketForFD = socket.socket(
 		        socket.AF_INET, socket.SOCK_STREAM) 
 	
-	# get local machine name
-	host = socket.gethostname()                           
 	
-	port = 7891 
+	portForFaceDetection = 7891 
 	
 	# bind to the port
-	serversocketForZB.bind((host, port))                                  
+	serversocketForFD.bind((host, portForFaceDetection))                                  
 	
 	# queue up to 5 requests
-	serversocketForZB.listen(5)                                           
+	serversocketForFD.listen(5)                                           
 	
-	print ("Server running on ", host," Port: ",  port, "for ZedBoard")
+	print ("Server running on ", host," Port: ",  portForFaceDetection, "for Face Detection")
 	
-	zedBoardClientSocket,zedBoardClientAddr = serversocketForZB.accept()
-	print ("Got a connection from ",zedBoardClientAddr)
+	faceDetectionClientSocket,faceDetectionClientAddr = serversocketForFD.accept()
+	print ("Got a connection from ",faceDetectionClientAddr)
+
+def createServerForLocalization():
+	global localizationClientSocket 
+	global serversocketForLO
+	global host
+	global portForLocalization
+	# create a socket object
+	serversocketForLO = socket.socket(
+		        socket.AF_INET, socket.SOCK_STREAM) 
+	
+	portForLocalization = 7892 
+	
+	# bind to the port
+	serversocketForLO.bind((host, portForLocalization))                                  
+	
+	# queue up to 5 requests
+	serversocketForLO.listen(5)                                           
+	
+	print ("Server running on ", host," Port: ",  portForLocalization, "for Localization")
+	
+	localizationClientSocket,localizationClientAddr = serversocketForLO.accept()
+	print ("Got a connection from ",localizationClientAddr)
 
 def createServerForMobileApp():
 	# create a socket object
 	serversocketForMA = socket.socket(
 		        socket.AF_INET, socket.SOCK_STREAM) 
 	
-	# get local machine name
-	host = socket.gethostname()                           
-	
-	port = 1010 
+	portForMobile = 1010 
 	
 	# bind to the port
-	serversocketForMA.bind((host, port))                                  
+	serversocketForMA.bind((host, portForMobile))                                  
 	
 	# queue up to 5 requests
 	serversocketForMA.listen(5)                                           
 	
-	print ("Server running on ", host," Port: ",  port, "for mobile app")
+	print ("Server running on ", host," Port: ",  portForMobile, "for mobile app")
 	mobileClientSocket,mobileClientAddr = serversocketForMA.accept()
 
 	print ("Got a connection from ",mobileClientAddr)
@@ -227,17 +257,24 @@ def createServerForMobileApp():
 #Dictionary containing Label to Name mapping
 LabelToName = {"Label1":"Name1","Label2":"Name2","LabelUnknown":"Unknown"}
 
+# Specify Host
+host = socket.gethostname()    
+#host = '192.168.1.1'
+
 ## Main Execution Flow Starts here
-createServerForZedBoard()
+createServerForFaceDetection()
+createServerForLocalization()
 #createServerForMobileApp()
 
 signBoardProcessThread = threading.Thread(target=signBoardProcess)
 textureDetectProcessThread = threading.Thread(target=textureDetectProcess)
-zedBoardTransactionThread = threading.Thread(target=zedBoardTransaction)
+faceDetectionTransactionThread = threading.Thread(target=faceDetectionTransaction)
+localizationTransactionThread = threading.Thread(target=localizationTransaction)
 mobilePhoneTransactionThread = threading.Thread(target=mobilePhoneTransaction)
 signBoardProcessThread.daemon = True
 textureDetectProcessThread.daemon = True
-zedBoardTransactionThread.daemon = True
+faceDetectionTransactionThread.daemon = True
+localizationTransactionThread.daemon = True
 mobilePhoneTransactionThread.daemon = True
 
 #Initial Values for Shared Variables
@@ -254,6 +291,8 @@ potHoleVar = "False"
 
 signBoardValue = "False"
 
+                       
+
 #Initial Object Definitions
 mySignBoardData = SignBoardDetect(signBoardValue)
 myTextureData = TextureDetect(terrainValue,potHoleVar)
@@ -263,6 +302,7 @@ myConsolidatedString = ConsolidatedString("","","","")
 
 signBoardProcessThread.start()
 textureDetectProcessThread.start()
-zedBoardTransactionThread.start()
+faceDetectionTransactionThread.start()
+localizationTransactionThread.start()
 mobilePhoneTransactionThread.start()
 time.sleep(5.1)
