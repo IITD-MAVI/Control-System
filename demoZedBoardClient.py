@@ -33,7 +33,6 @@ while True:
 		f.close()
 		print ("File Received")
 		serverSocket.close()
-		time.sleep(0.5)
 		print ("Reconnecting to Host : ",host," Port : ",port)
 		serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
 		# get local machine name
