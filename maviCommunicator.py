@@ -5,6 +5,7 @@ import threading
 import subprocess
 import re
 import json
+import cv2
 
 #Class Definitions for different components
 class SignBoardDetect:
@@ -80,6 +81,23 @@ def textureDetectProcess():
 		#print ("terrainValue : ", terrainValue)
 		#print ("potHoleVar : ", potHoleVar)
 
+def imageCaptureFromVideo():
+	vidcap = cv2.VideoCapture('HDVIDEO_1.mp4')
+	startTime = time.perf_counter()
+	while True:
+		time.sleep(1)
+		timeStamp = time.perf_counter() - startTime
+		vidcap.set(0,timeStamp*1000)      # just cue to 20 sec. position
+		success,image = vidcap.read()
+		if success:
+		    resized_image = cv2.resize(image,(640,480),0,0,cv2.INTER_CUBIC)
+		    gray_image = cv2.cvtColor(resized_image, cv2.COLOR_BGR2GRAY)
+		    with lock:
+		    	cv2.imwrite("currentColorFrame.jpg", resized_image)     # save frame as JPEG file
+		    	cv2.imwrite("currentGrayscaleFrame.jpg", gray_image)
+		    print ("Last TimeStamp Captured : ",timeStamp)
+		else:
+			break
 
 ##Function for Capturing the FaceDetection Data from ZedBoard
 def faceDetectionTransaction():
@@ -271,11 +289,13 @@ textureDetectProcessThread = threading.Thread(target=textureDetectProcess)
 faceDetectionTransactionThread = threading.Thread(target=faceDetectionTransaction)
 localizationTransactionThread = threading.Thread(target=localizationTransaction)
 mobilePhoneTransactionThread = threading.Thread(target=mobilePhoneTransaction)
+imageCaptureThread = threading.Thread(target=imageCaptureFromVideo)
 signBoardProcessThread.daemon = True
 textureDetectProcessThread.daemon = True
 faceDetectionTransactionThread.daemon = True
 localizationTransactionThread.daemon = True
 mobilePhoneTransactionThread.daemon = True
+imageCaptureThread.daemon = True
 
 #Initial Values for Shared Variables
 pos_x = ""
@@ -300,6 +320,7 @@ myFaceDetectionData = FaceDetection(noOfFaces,nameArray)
 myPositionInfo = PositionInfo(pos_x,pos_y,pos_z)
 myConsolidatedString = ConsolidatedString("","","","")
 
+imageCaptureThread.start()
 signBoardProcessThread.start()
 textureDetectProcessThread.start()
 faceDetectionTransactionThread.start()
