@@ -6,6 +6,8 @@ import subprocess
 import re
 import json
 import cv2
+import bluetooth
+import sys
 
 #Class Definitions for different components
 class SignBoardDetect:
@@ -187,6 +189,7 @@ def localizationTransaction():
 
 
 def mobilePhoneTransaction():
+	global mobileBluetoothSock
 	while True:
 		time.sleep(1)
 		with lock:
@@ -207,7 +210,8 @@ def mobilePhoneTransaction():
 		#print (myTextureData.__dict__)
 		#print (myFaceDetectionData.__dict__)
 		#print (myPositionInfo.__dict__)
-		print (myConsolidatedString.__dict__)
+		print ("Sending to Phone : ", myConsolidatedString.__dict__)
+		mobileBluetoothSock.send(json.dumps(myConsolidatedString.__dict__).encode('ascii'))
 
 def createServerForFaceDetection():
 	global faceDetectionClientSocket
@@ -255,22 +259,34 @@ def createServerForLocalization():
 	print ("Got a connection from ",localizationClientAddr)
 
 def createServerForMobileApp():
-	# create a socket object
-	serversocketForMA = socket.socket(
-		        socket.AF_INET, socket.SOCK_STREAM) 
+	global mobileBluetoothSock
+	uuid = "446118f0-8b1e-11e2-9e96-0800200c9a66"
+	service_matches = bluetooth.find_service( uuid = uuid )
 	
-	portForMobile = 1010 
+	if len(service_matches) == 0:
+	    print ("couldn't find the FooBar service")
+	    sys.exit(0)
 	
-	# bind to the port
-	serversocketForMA.bind((host, portForMobile))                                  
+	first_match = service_matches[0]
+	mobilePort = first_match["port"]
+	mobileName = first_match["name"]
+	mobileHost = first_match["host"]
 	
-	# queue up to 5 requests
-	serversocketForMA.listen(5)                                           
-	
-	print ("Server running on ", host," Port: ",  portForMobile, "for mobile app")
-	mobileClientSocket,mobileClientAddr = serversocketForMA.accept()
+	print ("Connecting to ",mobileName, "on host ",mobileHost)
+	mobileBluetoothSock=bluetooth.BluetoothSocket( bluetooth.RFCOMM )
+	mobileBluetoothSock.connect((mobileHost, mobilePort))
+	print ("Connected to Mobile Phone.")
 
-	print ("Got a connection from ",mobileClientAddr)
+signBoardProcessThread = threading.Thread(target=signBoardProcess)
+textureDetectProcessThread = threading.Thread(target=textureDetectProcess)
+faceDetectionTransactionThread = threading.Thread(target=faceDetectionTransaction)
+localizationTransactionThread = threading.Thread(target=localizationTransaction)
+mobilePhoneTransactionThread = threading.Thread(target=mobilePhoneTransaction)
+signBoardProcessThread.daemon = True
+textureDetectProcessThread.daemon = True
+faceDetectionTransactionThread.daemon = True
+localizationTransactionThread.daemon = True
+mobilePhoneTransactionThread.daemon = True
 
 #Dictionary containing Label to Name mapping
 LabelToName = {"Label1":"Name1","Label2":"Name2","LabelUnknown":"Unknown"}
@@ -282,20 +298,7 @@ host = socket.gethostname()
 ## Main Execution Flow Starts here
 createServerForFaceDetection()
 createServerForLocalization()
-#createServerForMobileApp()
-
-signBoardProcessThread = threading.Thread(target=signBoardProcess)
-textureDetectProcessThread = threading.Thread(target=textureDetectProcess)
-faceDetectionTransactionThread = threading.Thread(target=faceDetectionTransaction)
-localizationTransactionThread = threading.Thread(target=localizationTransaction)
-mobilePhoneTransactionThread = threading.Thread(target=mobilePhoneTransaction)
-imageCaptureThread = threading.Thread(target=imageCaptureFromVideo)
-signBoardProcessThread.daemon = True
-textureDetectProcessThread.daemon = True
-faceDetectionTransactionThread.daemon = True
-localizationTransactionThread.daemon = True
-mobilePhoneTransactionThread.daemon = True
-imageCaptureThread.daemon = True
+createServerForMobileApp()
 
 #Initial Values for Shared Variables
 pos_x = ""
@@ -327,3 +330,6 @@ faceDetectionTransactionThread.start()
 localizationTransactionThread.start()
 mobilePhoneTransactionThread.start()
 time.sleep(5.1)
+mobileBluetoothSock.close()
+faceDetectionClientSocket.close()
+localizationClientSocket.close()
