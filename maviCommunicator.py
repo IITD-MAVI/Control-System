@@ -192,8 +192,8 @@ def mobilePhoneTransaction():
 		#print (myTextureData.__dict__)
 		#print (myFaceDetectionData.__dict__)
 		#print (myPositionInfo.__dict__)
-		print ("Sending to Phone : ", myConsolidatedString.__dict__)
-		mobileBluetoothSock.send(json.dumps(myConsolidatedString.__dict__).encode('ascii'))
+		print ("Sending to Phone : ", str(myConsolidatedString.__dict__))
+		mobileBluetoothSock.send(str(myConsolidatedString.__dict__))
 
 def createServerForFaceDetection():
 	global faceDetectionClientSocket
