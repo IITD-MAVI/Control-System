@@ -282,11 +282,13 @@ textureDetectProcessThread = threading.Thread(target=textureDetectProcess)
 faceDetectionTransactionThread = threading.Thread(target=faceDetectionTransaction)
 localizationTransactionThread = threading.Thread(target=localizationTransaction)
 mobilePhoneTransactionThread = threading.Thread(target=mobilePhoneTransaction)
+imageCaptureThread = threading.Thread(target=imageCaptureFromVideo)
 signBoardProcessThread.daemon = True
 textureDetectProcessThread.daemon = True
 faceDetectionTransactionThread.daemon = True
 localizationTransactionThread.daemon = True
 mobilePhoneTransactionThread.daemon = True
+imageCaptureThread.daemon = True
 
 #Dictionary containing Label to Name mapping
 LabelToName = {"Label1":"Name1","Label2":"Name2","LabelUnknown":"Unknown"}
