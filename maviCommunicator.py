@@ -107,7 +107,7 @@ def imageCaptureFromVideo():
 		timeStamp = time.perf_counter() - startTime
 		vidcap.set(0,timeStamp*1000)      # just cue to 20 sec. position
 		success,image = vidcap.read()
-		cv2.imshow('frame',frame)
+		cv2.imshow('frame',image)
 		if cv2.waitKey(1) & 0xFF == ord('q'):
 			break
 		if success:
@@ -382,7 +382,6 @@ textureDetectProcessThread.start()
 faceDetectionTransactionThread.start()
 localizationTransactionThread.start()
 mobilePhoneTransactionThread.start()
-imageCaptureFromUsbThread.start()
 while True:
 	a=1
 #time.sleep(5.1)
