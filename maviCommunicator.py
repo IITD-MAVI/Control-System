@@ -311,7 +311,8 @@ textureDetectProcessThread.start()
 faceDetectionTransactionThread.start()
 localizationTransactionThread.start()
 mobilePhoneTransactionThread.start()
-time.sleep(5.1)
+while True:
+	a=1
 mobileBluetoothSock.close()
 faceDetectionClientSocket.close()
 localizationClientSocket.close()
