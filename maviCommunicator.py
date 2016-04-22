@@ -184,15 +184,20 @@ def mobilePhoneTransaction():
 			myPositionInfo.pos_x = pos_x
 			myPositionInfo.pos_y = pos_y
 			myPositionInfo.pos_z = pos_z
-		myConsolidatedString.signBoardString = json.dumps(mySignBoardData.__dict__)
-		myConsolidatedString.textureString = json.dumps(myTextureData.__dict__)
-		myConsolidatedString.faceDetectionString = json.dumps(myFaceDetectionData.__dict__)
-		myConsolidatedString.positionString = json.dumps(myPositionInfo.__dict__)
+		#myConsolidatedString.signBoardString = json.dumps(mySignBoardData.__dict__)
+		#myConsolidatedString.textureString = json.dumps(myTextureData.__dict__)
+		#myConsolidatedString.faceDetectionString = json.dumps(myFaceDetectionData.__dict__)
+		#myConsolidatedString.positionString = json.dumps(myPositionInfo.__dict__)
+		myConsolidatedString.signBoardString = mySignBoardData.__dict__
+		myConsolidatedString.textureString = myTextureData.__dict__
+		myConsolidatedString.faceDetectionString = myFaceDetectionData.__dict__
+		myConsolidatedString.positionString = myPositionInfo.__dict__
+
 		#print (mySignBoardData.__dict__)
 		#print (myTextureData.__dict__)
 		#print (myFaceDetectionData.__dict__)
 		#print (myPositionInfo.__dict__)
-		print ("Sending to Phone : ", str(myConsolidatedString.__dict__))
+		print ("Sending to Phone : ", json.dumps(myConsolidatedString.__dict__))
 		mobileBluetoothSock.send(str(myConsolidatedString.__dict__))
 
 def createServerForFaceDetection():
