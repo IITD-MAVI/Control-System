@@ -210,8 +210,8 @@ def mobilePhoneTransaction():
 		#print (myTextureData.__dict__)
 		#print (myFaceDetectionData.__dict__)
 		#print (myPositionInfo.__dict__)
-		print ("Sending to Phone : ", myConsolidatedString.__dict__)
-		mobileBluetoothSock.send(json.dumps(myConsolidatedString.__dict__).encode('ascii'))
+		print ("Sending to Phone : ", str(myConsolidatedString.__dict__))
+		mobileBluetoothSock.send(str(myConsolidatedString.__dict__))
 
 def createServerForFaceDetection():
 	global faceDetectionClientSocket
@@ -331,7 +331,8 @@ textureDetectProcessThread.start()
 faceDetectionTransactionThread.start()
 localizationTransactionThread.start()
 mobilePhoneTransactionThread.start()
-time.sleep(5.1)
+while True:
+	a=1
 mobileBluetoothSock.close()
 faceDetectionClientSocket.close()
 localizationClientSocket.close()

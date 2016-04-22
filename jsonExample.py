@@ -6,7 +6,8 @@ class number:
 		self.kuchBhi = kuchBhi
 
 a = number(3,"Kuch Bhi")
-print(a.__dict__)
-print(json.dumps(a.__dict__))
-b = json.dumps(a.__dict__)
-print (b.__class__)
+#print(a.__dict__)
+#print(json.dumps(a.__dict__))
+#b = json.dumps(a.__dict__)
+#print (b.__class__)
+print(str(a.__dict__))
