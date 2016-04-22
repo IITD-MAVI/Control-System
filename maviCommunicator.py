@@ -52,12 +52,27 @@ lock = threading.Lock()
 #TODO: Replace with Actual SignBoard Program
 def signBoardProcess():
 	global signBoardValue
+
+	valueLog = ["False","False","False"]
+	localCount = 0
 	while True:
 		time.sleep(1)	#To be reviewed by Dedeepya
 		with lock:	#So that image is not being read/written
 			signBoardProgram = subprocess.Popen(["./signBoardDetect currentColorFrame.jpg"],stdout=subprocess.PIPE, shell = True)
-			(signBoardValue,err) = signBoardProgram.communicate()
-			signBoardValue = signBoardValue.decode("utf-8").strip()
+			(tempSignBoardValue,err) = signBoardProgram.communicate()
+			tempSignBoardValue = tempSignBoardValue.decode("utf-8").strip()
+		if (localCount < 2):
+			localCount +=1
+			valueLog[localCount] = tempSignBoardValue
+		else:
+			localCount = 0
+			valueLog[localCount] = tempSignBoardValue
+		if (valueLog[0] == "True" and valueLog[1] == "True" and valueLog[2] == "True"):
+			with lock:
+				signBoardValue = "True"
+		else:
+			with lock:
+				signBoardValue = "False"
 		#if signBoardValue == "True":
 		#	print ("SignBoard Detected")
 		#else:
@@ -346,9 +361,9 @@ faceDetectionTransactionThread.start()
 localizationTransactionThread.start()
 mobilePhoneTransactionThread.start()
 imageCaptureFromUsbThread.start()
-#while True:
-#	a=1
-time.sleep(5.1)
+while True:
+	a=1
+#time.sleep(5.1)
 mobileBluetoothSock.close()
 faceDetectionClientSocket.close()
 localizationClientSocket.close()
