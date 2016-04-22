@@ -8,6 +8,7 @@ import json
 import cv2
 import bluetooth
 import sys
+import cv2
 
 #Class Definitions for different components
 class SignBoardDetect:
@@ -52,12 +53,27 @@ lock = threading.Lock()
 #TODO: Replace with Actual SignBoard Program
 def signBoardProcess():
 	global signBoardValue
+
+	valueLog = ["False","False","False"]
+	localCount = 0
 	while True:
 		time.sleep(1)	#To be reviewed by Dedeepya
 		with lock:	#So that image is not being read/written
 			signBoardProgram = subprocess.Popen(["./signBoardDetect currentColorFrame.jpg"],stdout=subprocess.PIPE, shell = True)
-			(signBoardValue,err) = signBoardProgram.communicate()
-			signBoardValue = signBoardValue.decode("utf-8").strip()
+			(tempSignBoardValue,err) = signBoardProgram.communicate()
+			tempSignBoardValue = tempSignBoardValue.decode("utf-8").strip()
+		if (localCount < 2):
+			localCount +=1
+			valueLog[localCount] = tempSignBoardValue
+		else:
+			localCount = 0
+			valueLog[localCount] = tempSignBoardValue
+		if (valueLog[0] == "True" and valueLog[1] == "True" and valueLog[2] == "True"):
+			with lock:
+				signBoardValue = "True"
+		else:
+			with lock:
+				signBoardValue = "False"
 		#if signBoardValue == "True":
 		#	print ("SignBoard Detected")
 		#else:
@@ -124,6 +140,8 @@ def faceDetectionTransaction():
 					faceDetectionClientSocket.send(l)
 					l = f.read(1024)
 				f.close()
+				copyImageProcess = subprocess.Popen(["\cp currentGrayscaleFrame.jpg transferredGrayscaleFrame.jpg"],stdout=subprocess.PIPE, shell = True)
+				(copyOutput,err) = copyImageProcess.communicate()
 			print ("Image Sent. Closing Socket.")
 			faceDetectionClientSocket.close()
 			print ("Waiting for reconnection ..")
@@ -141,21 +159,22 @@ def faceDetectionTransaction():
 			receivedAcknowledge = "Received"
 			faceDetectionClientSocket.send(receivedAcknowledge.encode('ascii'))
 			fdResultArray = re.findall("[^,]+",faceDetectionResult)
+			noOfFaces_temp = fdResultArray[1]
+			print ("FD Result Array : ",fdResultArray)
+			
+			faceCoordinates = []
+			facesDetected = []
+			for face in range(int(noOfFaces_temp)):
+				print ("Face Value: ",face)
+				faceCoordinates.append((fdResultArray[2+face*4],fdResultArray[3+face*4],fdResultArray[4+face*4],fdResultArray[5+face*4]))
+				faceRecognitionProgram = subprocess.Popen(["./recognizeFace transferredGrayscaleFrame.jpg " + fdResultArray[2+face*4] + " " + fdResultArray[3+face*4] + " " + fdResultArray[4+face*4] + " " + fdResultArray[5+face*4]],stdout=subprocess.PIPE, shell = True)
+				(faceRecognitionOutput,err) = faceRecognitionProgram.communicate()
+				facesDetected.append(faceRecognitionOutput.decode("utf-8").strip())
+
+			#To be modified code
 			with lock:
-				noOfFaces = fdResultArray[1]
-			if noOfFaces == "0":
-				print ("No Faces in the frame")
-				with lock:
-					labelArray = []
-					nameArray = []
-			else:
-				for iterator in range(int(noOfFaces)):
-					print ("Face",iterator," Label: ",fdResultArray[2+iterator])
-				with lock:
-					labelArray = fdResultArray[2:]
-					nameArray = []
-					for label in labelArray:
-						nameArray.append(LabelToName[label])
+				noOfFaces = noOfFaces_temp
+				nameArray = facesDetected
 		else:
 			print ("Unidentified Data Identifier: ", dataIdentifier)
 	
@@ -206,6 +225,11 @@ def mobilePhoneTransaction():
 		myConsolidatedString.textureString = json.dumps(myTextureData.__dict__)
 		myConsolidatedString.faceDetectionString = json.dumps(myFaceDetectionData.__dict__)
 		myConsolidatedString.positionString = json.dumps(myPositionInfo.__dict__)
+		#myConsolidatedString.signBoardString = mySignBoardData.__dict__
+		#myConsolidatedString.textureString = myTextureData.__dict__
+		#myConsolidatedString.faceDetectionString = myFaceDetectionData.__dict__
+		#myConsolidatedString.positionString = myPositionInfo.__dict__
+
 		#print (mySignBoardData.__dict__)
 		#print (myTextureData.__dict__)
 		#print (myFaceDetectionData.__dict__)
@@ -277,12 +301,36 @@ def createServerForMobileApp():
 	mobileBluetoothSock.connect((mobileHost, mobilePort))
 	print ("Connected to Mobile Phone.")
 
+def imageCaptureFromUsb():
+	cap = cv2.VideoCapture(2)
+	while(True):
+		# Capture frame-by-frame
+		ret, colorFrame = cap.read()
+		
+		# Our operations on the frame come here
+		grayFrame = cv2.cvtColor(colorFrame, cv2.COLOR_BGR2GRAY)
+		
+		# Display the resulting frame
+		cv2.imshow('Camera_Stream',colorFrame)
+		if cv2.waitKey(1) & 0xFF == ord('q'):
+			break
+	
+		with lock:
+			cv2.imwrite('currentColorFrame.jpg',colorFrame)
+			cv2.imwrite('currentGrayscaleFrame.jpg',grayFrame)
+		#print ("Images Updated")
+
+	# When everything done, release the capture
+	cap.release()
+	cv2.destroyAllWindows()
+
 signBoardProcessThread = threading.Thread(target=signBoardProcess)
 textureDetectProcessThread = threading.Thread(target=textureDetectProcess)
 faceDetectionTransactionThread = threading.Thread(target=faceDetectionTransaction)
 localizationTransactionThread = threading.Thread(target=localizationTransaction)
 mobilePhoneTransactionThread = threading.Thread(target=mobilePhoneTransaction)
 imageCaptureThread = threading.Thread(target=imageCaptureFromVideo)
+
 signBoardProcessThread.daemon = True
 textureDetectProcessThread.daemon = True
 faceDetectionTransactionThread.daemon = True
@@ -331,8 +379,10 @@ textureDetectProcessThread.start()
 faceDetectionTransactionThread.start()
 localizationTransactionThread.start()
 mobilePhoneTransactionThread.start()
+imageCaptureFromUsbThread.start()
 while True:
 	a=1
+#time.sleep(5.1)
 mobileBluetoothSock.close()
 faceDetectionClientSocket.close()
 localizationClientSocket.close()

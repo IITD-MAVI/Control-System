@@ -13,7 +13,7 @@ port = 7891
 serverSocket.connect((host, port))                               
 
 #requestName = "Localization"
-requestName = "FaceDetectionTransmit"
+requestName = "FaceDetectionReceive"
 
 while True:
 	serverSocket.send(requestName.encode('ascii'))
@@ -44,7 +44,7 @@ while True:
 		handshake = serverSocket.recv(1024)
 		handshake = handshake.decode('ascii')
 		if handshake == "Send FD Data":
-			fdResult = "FD,2,Label1,Label2"
+			fdResult = "FD,2,face1_x,face1_y,face1_width,face1_height,face2_x,face2_y,face2_width,face2_height"
 			serverSocket.send(fdResult.encode('ascii'))
 			serverSocket.recv(1024)
 	elif requestName == "Localization":
