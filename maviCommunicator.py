@@ -107,6 +107,8 @@ def faceDetectionTransaction():
 					faceDetectionClientSocket.send(l)
 					l = f.read(1024)
 				f.close()
+				copyImageProcess = subprocess.Popen(["\cp currentGrayscaleFrame.jpg transferredGrayscaleFrame.jpg"],stdout=subprocess.PIPE, shell = True)
+				(copyOutput,err) = copyImageProcess.communicate()
 			print ("Image Sent. Closing Socket.")
 			faceDetectionClientSocket.close()
 			print ("Waiting for reconnection ..")
@@ -124,21 +126,22 @@ def faceDetectionTransaction():
 			receivedAcknowledge = "Received"
 			faceDetectionClientSocket.send(receivedAcknowledge.encode('ascii'))
 			fdResultArray = re.findall("[^,]+",faceDetectionResult)
+			noOfFaces_temp = fdResultArray[1]
+			print ("FD Result Array : ",fdResultArray)
+			
+			faceCoordinates = []
+			facesDetected = []
+			for face in range(int(noOfFaces_temp)):
+				print ("Face Value: ",face)
+				faceCoordinates.append((fdResultArray[2+face*4],fdResultArray[3+face*4],fdResultArray[4+face*4],fdResultArray[5+face*4]))
+				faceRecognitionProgram = subprocess.Popen(["./recognizeFace transferredGrayscaleFrame.jpg " + fdResultArray[2+face*4] + " " + fdResultArray[3+face*4] + " " + fdResultArray[4+face*4] + " " + fdResultArray[5+face*4]],stdout=subprocess.PIPE, shell = True)
+				(faceRecognitionOutput,err) = faceRecognitionProgram.communicate()
+				facesDetected.append(faceRecognitionOutput.decode("utf-8").strip())
+
+			#To be modified code
 			with lock:
-				noOfFaces = fdResultArray[1]
-			if noOfFaces == "0":
-				print ("No Faces in the frame")
-				with lock:
-					labelArray = []
-					nameArray = []
-			else:
-				for iterator in range(int(noOfFaces)):
-					print ("Face",iterator," Label: ",fdResultArray[2+iterator])
-				with lock:
-					labelArray = fdResultArray[2:]
-					nameArray = []
-					for label in labelArray:
-						nameArray.append(LabelToName[label])
+				noOfFaces = noOfFaces_temp
+				nameArray = facesDetected
 		else:
 			print ("Unidentified Data Identifier: ", dataIdentifier)
 	
@@ -282,7 +285,7 @@ def imageCaptureFromUsb():
 		with lock:
 			cv2.imwrite('currentColorFrame.jpg',colorFrame)
 			cv2.imwrite('currentGrayscaleFrame.jpg',grayFrame)
-		print ("Images Updated")
+		#print ("Images Updated")
 
 	# When everything done, release the capture
 	cap.release()
@@ -343,8 +346,9 @@ faceDetectionTransactionThread.start()
 localizationTransactionThread.start()
 mobilePhoneTransactionThread.start()
 imageCaptureFromUsbThread.start()
-while True:
-	a=1
+#while True:
+#	a=1
+time.sleep(5.1)
 mobileBluetoothSock.close()
 faceDetectionClientSocket.close()
 localizationClientSocket.close()
