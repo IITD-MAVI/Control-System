@@ -7,6 +7,7 @@ import re
 import json
 import bluetooth
 import sys
+import cv2
 
 #Class Definitions for different components
 class SignBoardDetect:
@@ -184,21 +185,21 @@ def mobilePhoneTransaction():
 			myPositionInfo.pos_x = pos_x
 			myPositionInfo.pos_y = pos_y
 			myPositionInfo.pos_z = pos_z
-		#myConsolidatedString.signBoardString = json.dumps(mySignBoardData.__dict__)
-		#myConsolidatedString.textureString = json.dumps(myTextureData.__dict__)
-		#myConsolidatedString.faceDetectionString = json.dumps(myFaceDetectionData.__dict__)
-		#myConsolidatedString.positionString = json.dumps(myPositionInfo.__dict__)
-		myConsolidatedString.signBoardString = mySignBoardData.__dict__
-		myConsolidatedString.textureString = myTextureData.__dict__
-		myConsolidatedString.faceDetectionString = myFaceDetectionData.__dict__
-		myConsolidatedString.positionString = myPositionInfo.__dict__
+		myConsolidatedString.signBoardString = json.dumps(mySignBoardData.__dict__)
+		myConsolidatedString.textureString = json.dumps(myTextureData.__dict__)
+		myConsolidatedString.faceDetectionString = json.dumps(myFaceDetectionData.__dict__)
+		myConsolidatedString.positionString = json.dumps(myPositionInfo.__dict__)
+		#myConsolidatedString.signBoardString = mySignBoardData.__dict__
+		#myConsolidatedString.textureString = myTextureData.__dict__
+		#myConsolidatedString.faceDetectionString = myFaceDetectionData.__dict__
+		#myConsolidatedString.positionString = myPositionInfo.__dict__
 
 		#print (mySignBoardData.__dict__)
 		#print (myTextureData.__dict__)
 		#print (myFaceDetectionData.__dict__)
 		#print (myPositionInfo.__dict__)
 		print ("Sending to Phone : ", json.dumps(myConsolidatedString.__dict__))
-		mobileBluetoothSock.send(str(myConsolidatedString.__dict__))
+		#mobileBluetoothSock.send(json.dumps(myConsolidatedString.__dict__))
 
 def createServerForFaceDetection():
 	global faceDetectionClientSocket
@@ -264,16 +265,41 @@ def createServerForMobileApp():
 	mobileBluetoothSock.connect((mobileHost, mobilePort))
 	print ("Connected to Mobile Phone.")
 
+def imageCaptureFromUsb():
+	cap = cv2.VideoCapture(2)
+	while(True):
+		# Capture frame-by-frame
+		ret, colorFrame = cap.read()
+		
+		# Our operations on the frame come here
+		grayFrame = cv2.cvtColor(colorFrame, cv2.COLOR_BGR2GRAY)
+		
+		# Display the resulting frame
+		cv2.imshow('Camera_Stream',colorFrame)
+		if cv2.waitKey(1) & 0xFF == ord('q'):
+			break
+	
+		with lock:
+			cv2.imwrite('currentColorFrame.jpg',colorFrame)
+			cv2.imwrite('currentGrayscaleFrame.jpg',grayFrame)
+		print ("Images Updated")
+
+	# When everything done, release the capture
+	cap.release()
+	cv2.destroyAllWindows()
+
 signBoardProcessThread = threading.Thread(target=signBoardProcess)
 textureDetectProcessThread = threading.Thread(target=textureDetectProcess)
 faceDetectionTransactionThread = threading.Thread(target=faceDetectionTransaction)
 localizationTransactionThread = threading.Thread(target=localizationTransaction)
 mobilePhoneTransactionThread = threading.Thread(target=mobilePhoneTransaction)
+imageCaptureFromUsbThread = threading.Thread(target=imageCaptureFromUsb)
 signBoardProcessThread.daemon = True
 textureDetectProcessThread.daemon = True
 faceDetectionTransactionThread.daemon = True
 localizationTransactionThread.daemon = True
 mobilePhoneTransactionThread.daemon = True
+imageCaptureFromUsbThread.daemon = True
 
 #Dictionary containing Label to Name mapping
 LabelToName = {"Label1":"Name1","Label2":"Name2","LabelUnknown":"Unknown"}
@@ -285,7 +311,7 @@ host = socket.gethostname()
 ## Main Execution Flow Starts here
 createServerForFaceDetection()
 createServerForLocalization()
-createServerForMobileApp()
+#createServerForMobileApp()
 
 
 #Initial Values for Shared Variables
@@ -316,6 +342,7 @@ textureDetectProcessThread.start()
 faceDetectionTransactionThread.start()
 localizationTransactionThread.start()
 mobilePhoneTransactionThread.start()
+imageCaptureFromUsbThread.start()
 while True:
 	a=1
 mobileBluetoothSock.close()
