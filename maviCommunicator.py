@@ -116,6 +116,9 @@ def imageCaptureFromVideo():
 		    with lock:
 		    	cv2.imwrite("currentColorFrame.jpg", resized_image)     # save frame as JPEG file
 		    	cv2.imwrite("currentGrayscaleFrame.jpg", gray_image)
+		    cv2.imshow("Current_Stream",resized_image)
+		    if cv2.waitKey(1) & 0xFF == ord('q'):
+			break
 		    print ("Last TimeStamp Captured : ",timeStamp)
 		else:
 			break
