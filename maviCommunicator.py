@@ -107,6 +107,9 @@ def imageCaptureFromVideo():
 		timeStamp = time.perf_counter() - startTime
 		vidcap.set(0,timeStamp*1000)      # just cue to 20 sec. position
 		success,image = vidcap.read()
+		cv2.imshow('frame',frame)
+		if cv2.waitKey(1) & 0xFF == ord('q'):
+			break
 		if success:
 		    resized_image = cv2.resize(image,(640,480),0,0,cv2.INTER_CUBIC)
 		    gray_image = cv2.cvtColor(resized_image, cv2.COLOR_BGR2GRAY)
