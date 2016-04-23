@@ -151,7 +151,7 @@ def faceDetectionTransaction():
 				faceCoordinates.append((fdResultArray[2+face*4],fdResultArray[3+face*4],fdResultArray[4+face*4],fdResultArray[5+face*4]))
 				faceRecognitionProgram = subprocess.Popen(["./recognizeFace transferredGrayscaleFrame.jpg " + fdResultArray[2+face*4] + " " + fdResultArray[3+face*4] + " " + fdResultArray[4+face*4] + " " + fdResultArray[5+face*4]],stdout=subprocess.PIPE, shell = True)
 				(faceRecognitionOutput,err) = faceRecognitionProgram.communicate()
-				facesDetected.append(faceRecognitionOutput.decode("utf-8").strip())
+				facesDetected.append(LabelToName[faceRecognitionOutput.decode("utf-8").strip()])
 
 			#To be modified code
 			with lock:
@@ -320,7 +320,7 @@ mobilePhoneTransactionThread.daemon = True
 imageCaptureFromUsbThread.daemon = True
 
 #Dictionary containing Label to Name mapping
-LabelToName = {"Label1":"Name1","Label2":"Name2","LabelUnknown":"Unknown"}
+LabelToName = {"0":"Chetan","1":"Siddarth","2":"Sachin","3": "Hassen","4":"Anupam","5":"Prof. Bala","6":"Manish","7": "Nipun","8":"Yoosuf","9":"Rajesh","Unknown":"Unknown"}
 
 # Specify Host
 host = socket.gethostname()    
