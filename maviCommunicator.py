@@ -54,26 +54,26 @@ lock = threading.Lock()
 def signBoardProcess():
 	global signBoardValue
 
-	valueLog = ["False","False","False"]
-	localCount = 0
+	#valueLog = ["False","False","False"]
+	#localCount = 0
 	while True:
 		time.sleep(1)	#To be reviewed by Dedeepya
 		with lock:	#So that image is not being read/written
 			signBoardProgram = subprocess.Popen(["./signBoardDetect currentColorFrame.jpg"],stdout=subprocess.PIPE, shell = True)
 			(tempSignBoardValue,err) = signBoardProgram.communicate()
-			tempSignBoardValue = tempSignBoardValue.decode("utf-8").strip()
-		if (localCount < 2):
-			localCount +=1
-			valueLog[localCount] = tempSignBoardValue
-		else:
-			localCount = 0
-			valueLog[localCount] = tempSignBoardValue
-		if (valueLog[0] == "True" and valueLog[1] == "True" and valueLog[2] == "True"):
-			with lock:
-				signBoardValue = "True"
-		else:
-			with lock:
-				signBoardValue = "False"
+			signBoardValue = tempSignBoardValue.decode("utf-8").strip()
+		#if (localCount < 2):
+		#	localCount +=1
+		#	valueLog[localCount] = tempSignBoardValue
+		#else:
+		#	localCount = 0
+		#	valueLog[localCount] = tempSignBoardValue
+		#if (valueLog[0] == "True" and valueLog[1] == "True" and valueLog[2] == "True"):
+		#	with lock:
+		#		signBoardValue = "True"
+		#else:
+		#	with lock:
+		#		signBoardValue = "False"
 		#if signBoardValue == "True":
 		#	print ("SignBoard Detected")
 		#else:
@@ -100,14 +100,14 @@ def textureDetectProcess():
 		#print ("potHoleVar : ", potHoleVar)
 
 def imageCaptureFromVideo():
-	vidcap = cv2.VideoCapture('HDVIDEO_1.mp4')
+	vidcap = cv2.VideoCapture('HDVIDEO_3.mp4')
 	startTime = time.perf_counter()
 	while True:
 		time.sleep(1)
 		timeStamp = time.perf_counter() - startTime
 		vidcap.set(0,timeStamp*1000)      # just cue to 20 sec. position
 		success,image = vidcap.read()
-		cv2.imshow('frame',image)
+		#cv2.imshow('frame',image)
 		if cv2.waitKey(1) & 0xFF == ord('q'):
 			break
 		if success:
@@ -118,10 +118,10 @@ def imageCaptureFromVideo():
 		    	cv2.imwrite("currentGrayscaleFrame.jpg", gray_image)
 		    cv2.imshow("Current_Stream",resized_image)
 		    if cv2.waitKey(1) & 0xFF == ord('q'):
-			break
+		    	break
 		    print ("Last TimeStamp Captured : ",timeStamp)
 		else:
-			break
+		    break
 
 ##Function for Capturing the FaceDetection Data from ZedBoard
 def faceDetectionTransaction():
@@ -175,7 +175,7 @@ def faceDetectionTransaction():
 				faceCoordinates.append((fdResultArray[2+face*4],fdResultArray[3+face*4],fdResultArray[4+face*4],fdResultArray[5+face*4]))
 				faceRecognitionProgram = subprocess.Popen(["./recognizeFace transferredGrayscaleFrame.jpg " + fdResultArray[2+face*4] + " " + fdResultArray[3+face*4] + " " + fdResultArray[4+face*4] + " " + fdResultArray[5+face*4]],stdout=subprocess.PIPE, shell = True)
 				(faceRecognitionOutput,err) = faceRecognitionProgram.communicate()
-				facesDetected.append(faceRecognitionOutput.decode("utf-8").strip())
+				facesDetected.append(LabelToName[faceRecognitionOutput.decode("utf-8").strip()])
 
 			#To be modified code
 			with lock:
@@ -241,7 +241,7 @@ def mobilePhoneTransaction():
 		#print (myFaceDetectionData.__dict__)
 		#print (myPositionInfo.__dict__)
 		print ("Sending to Phone : ", json.dumps(myConsolidatedString.__dict__))
-		mobileBluetoothSock.send(json.dumps(myConsolidatedString.__dict__))
+		#mobileBluetoothSock.send(json.dumps(myConsolidatedString.__dict__))
 
 def createServerForFaceDetection():
 	global faceDetectionClientSocket
@@ -345,7 +345,7 @@ mobilePhoneTransactionThread.daemon = True
 imageCaptureThread.daemon = True
 
 #Dictionary containing Label to Name mapping
-LabelToName = {"Label1":"Name1","Label2":"Name2","LabelUnknown":"Unknown"}
+LabelToName = {"0":"Chetan","1":"Siddarth","2":"Sachin","3": "Hassen","4":"Anupam","5":"Prof. Bala","6":"Manish","7": "Nipun","8":"Yoosuf","9":"Rajesh","Unknown":"Unknown"}
 
 # Specify Host
 host = socket.gethostname()    
@@ -354,7 +354,7 @@ host = socket.gethostname()
 ## Main Execution Flow Starts here
 createServerForFaceDetection()
 createServerForLocalization()
-createServerForMobileApp()
+#createServerForMobileApp()
 
 #Initial Values for Shared Variables
 pos_x = ""
