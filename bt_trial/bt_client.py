@@ -16,7 +16,7 @@ name = first_match["name"]
 host = first_match["host"]
 
 print ("connecting to ",name, "on host ",host)
-strings = ("{'textureString': '{\"texture\": [[0, 0, 0], [0, 0, 0]], \"pothole\": \"False\"}', 'signBoardString': '{\"isSignBoardDetected\": \"False\"}', 'positionString': '{\"pos_x\": \"\", \"pos_z\": \"\", \"pos_y\": \"\"}', 'faceDetectionString': '{\"noOfFaces\": 0, \"nameArray\": []}'}","{'textureString': '{\"texture\": [[1, 1, 1], [1, 1, 1]], \"pothole\": \"False\"}', 'signBoardString': '{\"isSignBoardDetected\": \"True\"}', 'positionString': '{\"pos_x\": \"\", \"pos_z\": \"\", \"pos_y\": \"\"}', 'faceDetectionString': '{\"noOfFaces\": 0, \"nameArray\": []}'}","{'textureString': '{\"texture\": [[0, 0, 0], [0, 0, 0]], \"pothole\": \"False\"}', 'signBoardString': '{\"isSignBoardDetected\": \"False\"}', 'positionString': '{\"pos_x\": \"\", \"pos_z\": \"\", \"pos_y\": \"\"}', 'faceDetectionString': '{\"noOfFaces\": 2, \"nameArray\": []}'}")
+strings = ("{'textureString': '{\"texture\": [[0, 0, 0], [0, 0, 0]], \"pothole\": \"False\"}', 'signBoardString': '{\"isSignBoardDetected\": \"False\"}', 'positionString': '{\"pos_x\": \"1.231\", \"pos_z\": \"2.2\", \"pos_y\": \"3.4\"}', 'faceDetectionString': '{\"noOfFaces\": 1, \"nameArray\": [\"Anupam\"]}', 'animalDetectionString' : '{\"noOfAnimals\": 1, \"animalArray\": [\"Cow\"], \"directionArray\" : [\"left\"]}'}")
 sock=bluetooth.BluetoothSocket( bluetooth.RFCOMM )
 sock.connect((host, port))
 for string in strings:
