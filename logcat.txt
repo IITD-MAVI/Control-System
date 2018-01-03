@@ -1,0 +1,136 @@
+01-03 14:33:55.140 3913-3926/? W/System: ClassLoader referenced unknown path: /data/app/com.nipungupta.helloworld-1/lib/arm64
+01-03 14:33:55.229 3913-3913/? D/Embryo: preload com.nipungupta.helloworld, 79ms, hwui=true, layout=true, decor=true
+01-03 14:33:55.232 3913-3930/? I/Adreno: QUALCOMM build                   : 8209866, I528a81912f
+                                         Build Date                       : 04/01/17
+                                         OpenGL ES Shader Compiler Version: XE031.14.00.02
+                                         Local Branch                     : 
+                                         Remote Branch                    : 
+                                         Remote Branch                    : 
+                                         Reconstruct Branch               : 
+01-03 14:33:55.234 3913-3930/? I/Adreno: PFP: 0x005ff087, ME: 0x005ff063
+01-03 14:33:55.237 3913-3930/? I/OpenGLRenderer: Initialized EGL, version 1.4
+01-03 14:33:55.238 3913-3930/? D/OpenGLRenderer: Swap behavior 1
+01-03 15:10:14.497 3913-3913/com.nipungupta.helloworld V/Font: Change font:1
+01-03 15:10:14.537 3913-3913/com.nipungupta.helloworld I/TextToSpeech: Sucessfully bound to com.google.android.tts
+01-03 15:10:14.541 3913-5399/com.nipungupta.helloworld D/AppTracker: App Event: start
+01-03 15:10:14.553 3913-3913/com.nipungupta.helloworld I/TextToSpeech: Connected to ComponentInfo{com.google.android.tts/com.google.android.tts.service.GoogleTTSService}
+01-03 15:10:14.556 3913-5405/com.nipungupta.helloworld I/TextToSpeech: Set up connection to ComponentInfo{com.google.android.tts/com.google.android.tts.service.GoogleTTSService}
+01-03 15:10:17.301 3913-5451/com.nipungupta.helloworld D/AppTracker: App Event: stop
+01-03 15:10:20.530 3913-5540/com.nipungupta.helloworld D/AppTracker: App Event: start
+01-03 15:10:34.028 3913-3913/com.nipungupta.helloworld W/BluetoothAdapter: getBluetoothService() called with no BluetoothManagerCallback
+01-03 15:10:50.448 3913-5971/com.nipungupta.helloworld D/AppTracker: App Event: stop
+01-03 15:10:50.492 3913-3913/com.nipungupta.helloworld I/TextToSpeech: Sucessfully bound to com.google.android.tts
+01-03 15:10:50.494 3913-5972/com.nipungupta.helloworld D/AppTracker: App Event: start
+01-03 15:10:50.550 3913-3913/com.nipungupta.helloworld I/TextToSpeech: Connected to ComponentInfo{com.google.android.tts/com.google.android.tts.service.GoogleTTSService}
+01-03 15:10:50.555 3913-5973/com.nipungupta.helloworld I/TextToSpeech: Set up connection to ComponentInfo{com.google.android.tts/com.google.android.tts.service.GoogleTTSService}
+01-03 15:11:35.534 3913-5734/com.nipungupta.helloworld D/AcceptThread: Exit while loop
+01-03 15:11:35.534 3913-6640/com.nipungupta.helloworld D/ConnectedThread: Waiting to receive
+01-03 15:11:35.556 3913-6640/com.nipungupta.helloworld D/ConnectedThread: Received
+01-03 15:11:35.556 3913-6640/com.nipungupta.helloworld D/ConnectedThread: JsonString: {'textureString': '{"texture": [[0, 0, 0], [0, 0, 0]], "pothole": "False"}', 'signBoardString': '{"isSignBoardDetected": "False"}', 'positionString': '{"pos_x": "", "pos_z": "", "pos_y": ""}', 'faceDetectionString': '{"noOfFaces": 0, "nameArray": []}'}
+01-03 15:11:35.556 3913-6640/com.nipungupta.helloworld D/ConnectedThread: Waiting to receive
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art: Rejecting re-init on previously-failed class java.lang.Class<net.minidev.json.JSONUtil$JsonSmartFieldFilter>: java.lang.NoClassDefFoundError: Failed resolution of: Lnet/minidev/asm/FieldFilter;
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at void net.minidev.json.reader.JsonWriter.<clinit>() (JsonWriter.java:153)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at void net.minidev.json.JSONValue.<clinit>() (JSONValue.java:537)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at void com.jayway.jsonpath.spi.json.JsonSmartJsonProvider.<init>() (JsonSmartJsonProvider.java:39)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at com.jayway.jsonpath.spi.json.JsonProvider com.jayway.jsonpath.internal.DefaultsImpl.jsonProvider() (DefaultsImpl.java:21)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at com.jayway.jsonpath.Configuration com.jayway.jsonpath.Configuration.defaultConfiguration() (Configuration.java:179)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at void com.jayway.jsonpath.internal.JsonReader.<init>() (JsonReader.java:48)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at com.jayway.jsonpath.DocumentContext com.jayway.jsonpath.JsonPath.parse(java.lang.String) (JsonPath.java:554)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at void com.nipungupta.helloworld.JsonPath.<init>(java.lang.String) (JsonPath.java:19)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at void com.nipungupta.helloworld.MainActivity.handle(java.lang.String) (MainActivity.java:365)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at void com.nipungupta.helloworld.MainActivity$20.handleMessage(android.os.Message) (MainActivity.java:261)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at void android.os.Handler.dispatchMessage(android.os.Message) (Handler.java:102)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at void android.os.Looper.loop() (Looper.java:154)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at void android.app.ActivityThread.main(java.lang.String[]) (ActivityThread.java:6334)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at java.lang.Object java.lang.reflect.Method.invoke!(java.lang.Object, java.lang.Object[]) (Method.java:-2)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at void com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run() (ZygoteInit.java:886)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at void com.android.internal.os.ZygoteInit.main(java.lang.String[]) (ZygoteInit.java:776)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art: Caused by: java.lang.ClassNotFoundException: Didn't find class "net.minidev.asm.FieldFilter" on path: DexPathList[[zip file "/data/app/com.nipungupta.helloworld-1/base.apk"],nativeLibraryDirectories=[/data/app/com.nipungupta.helloworld-1/lib/arm64, /system/lib64, /vendor/lib64]]
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at java.lang.Class dalvik.system.BaseDexClassLoader.findClass(java.lang.String) (BaseDexClassLoader.java:56)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at java.lang.Class java.lang.ClassLoader.loadClass(java.lang.String, boolean) (ClassLoader.java:380)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at java.lang.Class java.lang.ClassLoader.loadClass(java.lang.String) (ClassLoader.java:312)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at void net.minidev.json.reader.JsonWriter.<clinit>() (JsonWriter.java:153)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at void net.minidev.json.JSONValue.<clinit>() (JSONValue.java:537)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at void com.jayway.jsonpath.spi.json.JsonSmartJsonProvider.<init>() (JsonSmartJsonProvider.java:39)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at com.jayway.jsonpath.spi.json.JsonProvider com.jayway.jsonpath.internal.DefaultsImpl.jsonProvider() (DefaultsImpl.java:21)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at com.jayway.jsonpath.Configuration com.jayway.jsonpath.Configuration.defaultConfiguration() (Configuration.java:179)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at void com.jayway.jsonpath.internal.JsonReader.<init>() (JsonReader.java:48)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at com.jayway.jsonpath.DocumentContext com.jayway.jsonpath.JsonPath.parse(java.lang.String) (JsonPath.java:554)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at void com.nipungupta.helloworld.JsonPath.<init>(java.lang.String) (JsonPath.java:19)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at void com.nipungupta.helloworld.MainActivity.handle(java.lang.String) (MainActivity.java:365)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at void com.nipungupta.helloworld.MainActivity$20.handleMessage(android.os.Message) (MainActivity.java:261)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at void android.os.Handler.dispatchMessage(android.os.Message) (Handler.java:102)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at void android.os.Looper.loop() (Looper.java:154)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at void android.app.ActivityThread.main(java.lang.String[]) (ActivityThread.java:6334)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at java.lang.Object java.lang.reflect.Method.invoke!(java.lang.Object, java.lang.Object[]) (Method.java:-2)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at void com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run() (ZygoteInit.java:886)
+01-03 15:11:35.587 3913-3913/com.nipungupta.helloworld I/art:     at void com.android.internal.os.ZygoteInit.main(java.lang.String[]) (ZygoteInit.java:776)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art: Rejecting re-init on previously-failed class java.lang.Class<net.minidev.json.JSONUtil$JsonSmartFieldFilter>: java.lang.NoClassDefFoundError: Failed resolution of: Lnet/minidev/asm/FieldFilter;
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at void net.minidev.json.reader.JsonWriter.<clinit>() (JsonWriter.java:153)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at void net.minidev.json.JSONValue.<clinit>() (JSONValue.java:537)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at void com.jayway.jsonpath.spi.json.JsonSmartJsonProvider.<init>() (JsonSmartJsonProvider.java:39)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at com.jayway.jsonpath.spi.json.JsonProvider com.jayway.jsonpath.internal.DefaultsImpl.jsonProvider() (DefaultsImpl.java:21)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at com.jayway.jsonpath.Configuration com.jayway.jsonpath.Configuration.defaultConfiguration() (Configuration.java:179)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at void com.jayway.jsonpath.internal.JsonReader.<init>() (JsonReader.java:48)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at com.jayway.jsonpath.DocumentContext com.jayway.jsonpath.JsonPath.parse(java.lang.String) (JsonPath.java:554)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at void com.nipungupta.helloworld.JsonPath.<init>(java.lang.String) (JsonPath.java:19)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at void com.nipungupta.helloworld.MainActivity.handle(java.lang.String) (MainActivity.java:365)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at void com.nipungupta.helloworld.MainActivity$20.handleMessage(android.os.Message) (MainActivity.java:261)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at void android.os.Handler.dispatchMessage(android.os.Message) (Handler.java:102)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at void android.os.Looper.loop() (Looper.java:154)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at void android.app.ActivityThread.main(java.lang.String[]) (ActivityThread.java:6334)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at java.lang.Object java.lang.reflect.Method.invoke!(java.lang.Object, java.lang.Object[]) (Method.java:-2)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at void com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run() (ZygoteInit.java:886)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at void com.android.internal.os.ZygoteInit.main(java.lang.String[]) (ZygoteInit.java:776)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art: Caused by: java.lang.ClassNotFoundException: Didn't find class "net.minidev.asm.FieldFilter" on path: DexPathList[[zip file "/data/app/com.nipungupta.helloworld-1/base.apk"],nativeLibraryDirectories=[/data/app/com.nipungupta.helloworld-1/lib/arm64, /system/lib64, /vendor/lib64]]
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at java.lang.Class dalvik.system.BaseDexClassLoader.findClass(java.lang.String) (BaseDexClassLoader.java:56)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at java.lang.Class java.lang.ClassLoader.loadClass(java.lang.String, boolean) (ClassLoader.java:380)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at java.lang.Class java.lang.ClassLoader.loadClass(java.lang.String) (ClassLoader.java:312)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at void net.minidev.json.reader.JsonWriter.<clinit>() (JsonWriter.java:153)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at void net.minidev.json.JSONValue.<clinit>() (JSONValue.java:537)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at void com.jayway.jsonpath.spi.json.JsonSmartJsonProvider.<init>() (JsonSmartJsonProvider.java:39)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at com.jayway.jsonpath.spi.json.JsonProvider com.jayway.jsonpath.internal.DefaultsImpl.jsonProvider() (DefaultsImpl.java:21)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at com.jayway.jsonpath.Configuration com.jayway.jsonpath.Configuration.defaultConfiguration() (Configuration.java:179)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at void com.jayway.jsonpath.internal.JsonReader.<init>() (JsonReader.java:48)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at com.jayway.jsonpath.DocumentContext com.jayway.jsonpath.JsonPath.parse(java.lang.String) (JsonPath.java:554)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at void com.nipungupta.helloworld.JsonPath.<init>(java.lang.String) (JsonPath.java:19)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at void com.nipungupta.helloworld.MainActivity.handle(java.lang.String) (MainActivity.java:365)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at void com.nipungupta.helloworld.MainActivity$20.handleMessage(android.os.Message) (MainActivity.java:261)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at void android.os.Handler.dispatchMessage(android.os.Message) (Handler.java:102)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at void android.os.Looper.loop() (Looper.java:154)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at void android.app.ActivityThread.main(java.lang.String[]) (ActivityThread.java:6334)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at java.lang.Object java.lang.reflect.Method.invoke!(java.lang.Object, java.lang.Object[]) (Method.java:-2)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at void com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run() (ZygoteInit.java:886)
+01-03 15:11:35.588 3913-3913/com.nipungupta.helloworld I/art:     at void com.android.internal.os.ZygoteInit.main(java.lang.String[]) (ZygoteInit.java:776)
+01-03 15:11:35.600 3913-3913/com.nipungupta.helloworld W/System.err: log4j:WARN No appenders could be found for logger (com.jayway.jsonpath.internal.CompiledPath).
+01-03 15:11:35.600 3913-3913/com.nipungupta.helloworld W/System.err: log4j:WARN Please initialize the log4j system properly.
+01-03 15:11:35.601 3913-3913/com.nipungupta.helloworld W/System.err: log4j:WARN See http://logging.apache.org/log4j/1.2/faq.html#noconfig for more info.
+01-03 15:11:35.602 3913-3913/com.nipungupta.helloworld D/YourTag: {"texture": [[0, 0, 0], [0, 0, 0]], "pothole": "False"}
+01-03 15:11:35.604 3913-3913/com.nipungupta.helloworld D/YourTagInSign: [[0,0,0],[0,0,0]]
+01-03 15:11:35.608 3913-3913/com.nipungupta.helloworld D/YourTagInSign: {"isSignBoardDetected": "False"}
+01-03 15:11:35.611 3913-3913/com.nipungupta.helloworld D/YourTag11: {"noOfFaces": 0, "nameArray": []}
+01-03 15:11:35.614 3913-3913/com.nipungupta.helloworld D/AndroidRuntime: Shutting down VM
+01-03 15:11:35.614 3913-3913/com.nipungupta.helloworld E/AndroidRuntime: FATAL EXCEPTION: main
+                                                                         Process: com.nipungupta.helloworld, PID: 3913
+                                                                         com.jayway.jsonpath.PathNotFoundException: No results for path: $['animalDetectionString']
+                                                                             at com.jayway.jsonpath.internal.token.PathToken.handleObjectProperty(PathToken.java:53)
+                                                                             at com.jayway.jsonpath.internal.token.PropertyPathToken.evaluate(PropertyPathToken.java:44)
+                                                                             at com.jayway.jsonpath.internal.token.RootPathToken.evaluate(RootPathToken.java:53)
+                                                                             at com.jayway.jsonpath.internal.CompiledPath.evaluate(CompiledPath.java:53)
+                                                                             at com.jayway.jsonpath.internal.CompiledPath.evaluate(CompiledPath.java:61)
+                                                                             at com.jayway.jsonpath.JsonPath.read(JsonPath.java:178)
+                                                                             at com.jayway.jsonpath.internal.JsonReader.read(JsonReader.java:146)
+                                                                             at com.jayway.jsonpath.internal.JsonReader.read(JsonReader.java:135)
+                                                                             at com.nipungupta.helloworld.JsonPath.read(JsonPath.java:33)
+                                                                             at com.nipungupta.helloworld.MainActivity.animalDetect(MainActivity.java:425)
+                                                                             at com.nipungupta.helloworld.MainActivity.handle(MainActivity.java:376)
+                                                                             at com.nipungupta.helloworld.MainActivity$20.handleMessage(MainActivity.java:261)
+                                                                             at android.os.Handler.dispatchMessage(Handler.java:102)
+                                                                             at android.os.Looper.loop(Looper.java:154)
+                                                                             at android.app.ActivityThread.main(ActivityThread.java:6334)
+                                                                             at java.lang.reflect.Method.invoke(Native Method)
+                                                                             at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:886)
+                                                                             at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:776)
+01-03 15:11:35.615 3913-3913/? D/AppTracker: App Event: crash
+01-03 15:11:35.627 3913-3913/? I/Process: Sending signal. PID: 3913 SIG: 9
+
