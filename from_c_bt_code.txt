@@ -1,0 +1,91 @@
+                            strcpy(text,"{\"signBoardString\": {\"isSignBoardDetected\": \"");
+                            printf("%s",text);
+                            //printf("Here\n");
+                            strcat(text, (char *)signboard);
+                            //printf("Here2\n");
+                            strcat(text,"\"}, \"textureString\": {\"pothole\": \"False\", \"texture\": [[\"");
+                            //printf("Here\n");
+                            strcat(text,itoa(texture[0][0]));
+                            //printf("Here2\n");
+                            strcat(text,"\", \"");
+                            //printf("Here\n");
+                            strcat(text,itoa(texture[0][2]));
+                            //printf("Here2\n");
+                            strcat(text,"\", \"");
+                            strcat(text,itoa(texture[2][0]));
+                            strcat(text,"\"],[\"");
+                            strcat(text,itoa(texture[2][2]));
+                            strcat(text,"\", \"");
+                            strcat(text,itoa(texture[4][0]));
+                            strcat(text,"\", \"");
+                            strcat(text,itoa(texture[4][2]));
+                            strcat(text,"\"]]}, \"positionString\": { \"pos_x\": ");
+                            strcat(text,"1.1");
+                            strcat(text,", \"pos_y\": ");
+                            strcat(text,"1.1");
+                            strcat(text,", \"pos_z\": ");
+                            strcat(text,"1.1");
+                            strcat(text,"}, \"faceDetectionString\": {\"noOfFaces\": \"");
+                            strcat(text,itoa(no_faces));
+                            int iter;
+                            if(s1==1)
+                            {
+                            	strcat(text,"\", \"nameArray\": [\"");
+                            	
+                            	for(iter = 0;iter<no_faces;iter++)
+	                            {
+	                            	if(iter != no_faces -1)
+	                            	{
+				//	strcat(text,"\"");
+	                            		strcat(text,(char*)faces[iter]);
+	                            		strcat(text,"\", \"");
+	                            	}
+	                            	else
+	                            	{
+	                            		strcat(text,(char *)faces[iter]);                               
+	                            	//strcat(text,"\"");
+	                            	}
+
+                            	}	
+                            }
+                            else
+                            {
+                            	strcat(text,"\", \"nameArray\": [\"");	
+                            }	
+                            
+                            strcat(text,"\"]}, \"animalDetectionString\": {\"noOfAnimals\": ");
+                            strcat(text,itoa(cows));
+
+                            strcat(text,", \"animalArray\": [\"");
+                            for(iter = 0;iter<cows;iter++)
+                            {
+
+                            	if(iter != cows - 1)
+                            	{
+                            		strcat(text, "Cow");
+                            		strcat(text,"\", \"");
+                            	}
+                            	else
+                            	{
+                            		strcat(text, "Cow");
+                            	}
+
+                            }
+                            strcat(text,"\"], \"directionArray\": [\"");
+                            for(iter = 0;iter<cows;iter++)
+                            {
+                            	if(iter != cows-1)
+                            	{
+                            		strcat(text,(char *)cow_pos[iter]);
+                            		strcat(text,"\", \"");
+                            	}
+                            	else
+                            	{
+                            		strcat(text,(char *)cow_pos[iter]);
+
+                            	}
+                            }
+                            strcat(text,"\"] }}");
+                            //printf("before sending\n");
+                            printf("%s",text);
+
