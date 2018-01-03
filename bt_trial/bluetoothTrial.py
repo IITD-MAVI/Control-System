@@ -1,4 +1,4 @@
-#! python3
+#!/usr/bin/python3
 import bluetooth 
 
 nearby_devices = bluetooth.discover_devices(lookup_names=True)
