@@ -1,4 +1,4 @@
-#! python3
+#!/usr/bin/python3
 import time
 import sys
 import bluetooth
@@ -16,10 +16,14 @@ name = first_match["name"]
 host = first_match["host"]
 
 print ("connecting to ",name, "on host ",host)
-strings = ("{'textureString': '{\"texture\": [[0, 0, 0], [0, 0, 0]], \"pothole\": \"False\"}', 'signBoardString': '{\"isSignBoardDetected\": \"False\"}', 'positionString': '{\"pos_x\": \"1.231\", \"pos_z\": \"2.2\", \"pos_y\": \"3.4\"}', 'faceDetectionString': '{\"noOfFaces\": 1, \"nameArray\": [\"Anupam\"]}', 'animalDetectionString' : '{\"noOfAnimals\": 1, \"animalArray\": [\"Cow\"], \"directionArray\" : [\"left\"]}'}")
+sampleJson="{'textureString': '{\"texture\": [[0, 0, 0], [0, 0, 0]], \"pothole\": \"False\"}', 'signBoardString': '{\"isSignBoardDetected\": \"False\"}', 'positionString': '{\"pos_x\": \"1.231\", \"pos_z\": \"2.2\", \"pos_y\": \"3.4\"}', 'faceDetectionString': '{\"noOfFaces\": 1, \"nameArray\": [\"Anupam\"]}', 'animalDetectionString' : '{\"noOfAnimals\": 1, \"animalArray\": [\"Cow\"], \"directionArray\" : [\"left\"]}'}"
+
+strings = [sampleJson for x in range(10)]
 sock=bluetooth.BluetoothSocket( bluetooth.RFCOMM )
 sock.connect((host, port))
 for string in strings:
 	sock.send(string)
 	time.sleep(1)
+        powerSwitches = sock.recv(1024)
+        print(powerSwitches)
 sock.close()
